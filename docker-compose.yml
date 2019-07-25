@@ -1,0 +1,9 @@
+version: '3'
+services:
+  exercism_jenkins:
+    build: .
+    container_name: exercism_jenkins
+    ports:
+      - "8080:8080"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dpermissive-script-security.enabled=true

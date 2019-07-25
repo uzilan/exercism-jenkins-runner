@@ -1,0 +1,76 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.26">
+  <actions>
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.20">
+      <jobPropertyDescriptors>
+        <string>hudson.model.ParametersDefinitionProperty</string>
+      </jobPropertyDescriptors>
+    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>UUID</name>
+          <description>Exercise UUID</description>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.58">
+    <script>import groovy.io.FileType
+
+def path = &quot;&quot;
+def uuid = &quot;&quot;
+
+properties([[$class: &quot;ParametersDefinitionProperty&quot;,
+    parameterDefinitions: [
+        [$class: &quot;StringParameterDefinition&quot;,
+            description : &quot;Exercise UUID&quot;,
+            name        : &quot;UUID&quot;]]]])
+            
+stage(&quot;Download&quot;) {
+    uuid = env.getEnvironment().get(&quot;UUID&quot;)
+   
+    node {
+        path = sh(script: &quot;exercism download --uuid=$uuid&quot;, returnStdout: true).trim()
+        
+        def split = path.split(&apos;/&apos;)
+        def splitLength = split.length
+        def solutionName = split[splitLength-1]
+        def track = split[splitLength-2]
+        def userName = split[splitLength-3]
+        
+        currentBuild.description = &quot;${userName}s solution for ${solutionName} on ${track}&quot;
+    }
+}
+stage(&quot;Do not ignore tests&quot;) {
+    node {
+        if (path.indexOf(&quot;kotlin&quot;) &gt;-1) {
+            def dir = new File(&quot;${path}/src/test/kotlin&quot;)
+            dir.eachFileRecurse (FileType.FILES) { file -&gt;
+                file.write(file.text.replaceAll(&apos;@Ignore&apos;, &apos;//@Ignore&apos;))
+            }
+        } else if (path.indexOf(&quot;java&quot;) &gt;-1) {
+            def dir = new File(&quot;${path}/src/test/java&quot;)
+            dir.eachFileRecurse (FileType.FILES) { file -&gt;
+                file.write(file.text.replaceAll(&apos;@Ignore&apos;, &apos;//@Ignore&apos;))
+            }
+        }
+    }
+}
+stage(&quot;Test&quot;) {
+    node {
+        dir (path) {
+            sh &apos;gradle clean test&apos;
+        }
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
