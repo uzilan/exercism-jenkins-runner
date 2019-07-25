@@ -1,5 +1,5 @@
-# Exercism Jenkins Gradle Runner
-This docker image runs a Jenkins server which can be used to run Exercism gradle builds given a UUID.
+# Exercism Jenkins Runner
+This docker image runs a Jenkins server which can be used to run Exercism builds given a UUID.
 
 As a mentor, you usually want to make sure that the solution you are looking at pasts the tests. 
 In order to do that you can simply copy the solutions UUID and run the jenkins job with it. 
