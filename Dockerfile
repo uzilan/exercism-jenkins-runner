@@ -7,7 +7,7 @@ RUN cd /tmp \
     && wget https://github.com/exercism/cli/releases/download/v3.0.12/exercism-linux-64bit.tgz \
     && tar -xf exercism-linux-64bit.tgz \
     && mv /tmp/exercism /usr/local/bin/exercism \
-	&& wget https://services.gradle.org/distributions/gradle-5.5.1-bin.zip \
+    && wget https://services.gradle.org/distributions/gradle-5.5.1-bin.zip \
     && unzip gradle-5.5.1-bin.zip \
     && mv gradle-5.5.1 /usr/local/bin/gradle-5.5.1
 
