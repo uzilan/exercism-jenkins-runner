@@ -1,7 +1,7 @@
 # Exercism Jenkins Runner
-This docker image runs a Jenkins server which can be used to run Exercism builds given a UUID.
+This docker image runs a Jenkins server which can be used to run [Exercism](https://exercism.io) builds given a UUID.
 
-As a mentor, you usually want to make sure that the solution you are looking at pasts the tests. 
+As an Exercism mentor, you usually want to make sure that the solution you are looking at pasts the tests. 
 In order to do that you can simply copy the solutions UUID and run the jenkins job with it. 
 Jenkins will download the solution, comment the Junit's `@Ignore` annotations and then run the tests. 
 If the job is green, then all the tests have passed. If it is red, then something went wrong and you 
